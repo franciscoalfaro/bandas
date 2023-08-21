@@ -1,15 +1,18 @@
 import React, { useState } from 'react'
+import { useSocket } from '../hooks/useSocket'
 
-export const BandAdd = ({crearBanda}) => {
+export const BandAdd = () => {
 
   const [agregar, setAgregar] = useState('')
+  const {socket} = useSocket('')
 
   const onsubmit = (e)=>{
     e.preventDefault()
-    console.log(agregar)
+
 
     if(agregar.trim().length >0){
-      crearBanda(agregar)
+  
+      socket.emit('crear-banda', agregar)
 
       setAgregar('')
     }

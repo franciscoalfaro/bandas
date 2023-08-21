@@ -2,35 +2,17 @@ import React, { useEffect, useState } from "react"
 import { BandAdd } from "./componentes/BandAdd"
 import { BandList } from "./componentes/BandList"
 
-import { io } from 'socket.io-client';
 
-const sockets = io('/');
+import { useSocket } from "./hooks/useSocket";
+
+
 
 
 function App() {
 
-  const [socket] = useState(sockets)
-  const [online, setOnline] = useState(false)
+
+  const {online,socket} =  useSocket('')
   const [bands, setBands] = useState([])
-
-  useEffect(() => {
-    setOnline(socket.connected)
-
-  }, [socket])
-  
-  useEffect(()=>{
-    socket.on('connect', ()=>{
-      setOnline(true)
-    })
-
-  },[socket])
-
-  useEffect(()=>{
-    socket.on('disconnect', ()=>{
-      setOnline(false)
-    })
-
-  },[socket])
 
 
   useEffect(()=>{
@@ -58,10 +40,6 @@ function App() {
     
   }
 
-  const crearBanda = (name) => {
-    socket.emit('crear-banda', name)
-  }
-
 
 
 
@@ -84,7 +62,7 @@ function App() {
         </div>
 
         <div className="col-4">
-          <BandAdd crearBanda={crearBanda}></BandAdd>
+          <BandAdd></BandAdd>
         </div>
       </div>
 
