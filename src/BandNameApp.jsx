@@ -1,11 +1,11 @@
 import React from 'react'
 import { SocketProvider } from './context/SocketContext'
-import App from './App'
+import HomePage from './pages/HomePage'
 
 export const BandNameApp = () => {
   return (
     <SocketProvider>
-        <App></App>
+        <HomePage></HomePage>
     </SocketProvider>
   )
 }

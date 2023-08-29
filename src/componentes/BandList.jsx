@@ -1,20 +1,27 @@
-import React, { useEffect, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
+import { SocketContext } from '../context/SocketContext'
 
 
-export const BandList = ({ data, votar, borrarBanda, cambiarNombre }) => {
+export const BandList = () => {
 
-    const [bands, setBands] = useState(data)
+    const [bands, setBands] = useState([])
+    const { socket } = useContext(SocketContext)
 
-    useEffect( ()=>{
-        setBands(data)
+    useEffect(() => {
 
-    },[data])
+        socket.on('current-band', (bands) => {
+            setBands(bands)
+        })
 
-    const cambioNombre = (e, id)=>{
+        return () => socket.off('current-band')
+
+    }, [socket])
+
+    const cambioNombre = (e, id) => {
         const nuevoNombre = e.target.value
-        
-        setBands(bands => bands.map(band =>{
-            if(band.id === id){
+
+        setBands(bands => bands.map(band => {
+            if (band.id === id) {
                 band.name = nuevoNombre
             }
             return band
@@ -22,26 +29,39 @@ export const BandList = ({ data, votar, borrarBanda, cambiarNombre }) => {
     }
 
     const onPerdioFoco = (id, name) => {
-        cambiarNombre(id, name)
+        socket.emit('cambiar-nombre', { id, name })
     }
-   
+
+    const votar = (id) => {
+
+        socket.emit('votar-banda', id)
+
+    }
+
+    const borrarBanda = (id) => {
+
+        socket.emit('borrar-banda', id)
+    }
+
+
+
 
     const crearRows = () => {
         return (
-            bands.map( band => (
+            bands.map(band => (
                 <tr key={band.id}>
                     <td>
-                        <button className='btn btn-primary' onClick={ () => votar( band.id)  }> +1 </button>
+                        <button className='btn btn-primary' onClick={() => votar(band.id)}> +1 </button>
                     </td>
 
                     <td>
-                        <input className='form-control' value={band.name} 
-                        onChange={(e) => cambioNombre(e, band.id)} 
-                        onBlur={() => onPerdioFoco(band.id, band.name)}></input>
+                        <input className='form-control' value={band.name}
+                            onChange={(e) => cambioNombre(e, band.id)}
+                            onBlur={() => onPerdioFoco(band.id, band.name)}></input>
                     </td>
                     <td><h3>{band.vote}</h3></td>
                     <td>
-                        <button className='btn btn-danger' onClick={()=> borrarBanda (band.id)}>borrar</button>
+                        <button className='btn btn-danger' onClick={() => borrarBanda(band.id)}>borrar</button>
                     </td>
                 </tr>
             ))

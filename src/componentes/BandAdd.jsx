@@ -1,10 +1,10 @@
-import React, { useState } from 'react'
-import { useSocket } from '../hooks/useSocket'
+import React, { useContext, useState } from 'react'
+import { SocketContext } from '../context/SocketContext'
 
 export const BandAdd = () => {
 
   const [agregar, setAgregar] = useState('')
-  const {socket} = useSocket('')
+  const {socket} = useContext(SocketContext)
 
   const onsubmit = (e)=>{
     e.preventDefault()
@@ -12,7 +12,8 @@ export const BandAdd = () => {
 
     if(agregar.trim().length >0){
   
-      socket.emit('crear-banda', agregar)
+      socket.emit('crear-banda', {name:agregar})
+      console.log(agregar)
 
       setAgregar('')
     }
